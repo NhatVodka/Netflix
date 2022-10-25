@@ -1,27 +1,24 @@
 import Image from "next/image";
 import { Movie } from "../typing";
 import { useEffect, useState } from "react";
-import { baseUrl } from "../constants/movie";
 import { FaPlay } from "react-icons/fa";
 import { InformationCircleIcon } from "@heroicons/react/24/solid";
 
 interface Props {
-  netflixOriginals: Movie[];
+  NowPlaying: Movie[];
 }
 
-const Banner = ({ netflixOriginals }: Props) => {
+const Banner = ({ NowPlaying }: Props) => {
   const [movie, setMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
-    setMovie(
-      netflixOriginals[Math.floor(Math.random() * netflixOriginals.length)]
-    );
-  }, [netflixOriginals]);
+    setMovie(NowPlaying[Math.floor(Math.random() * NowPlaying.length)]);
+  }, [NowPlaying]);
   return (
     <div className="flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-16">
       <div className="absolute left-0 top-0 h-[95vh] -z-10 w-screen">
         <Image
-          src={`${baseUrl}${movie?.backdrop_path || movie?.poster_path}`}
+          src={movie?.backdrop_path! || movie?.poster_path!}
           layout="fill"
           objectFit="cover"
         />

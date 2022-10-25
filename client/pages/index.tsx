@@ -7,26 +7,14 @@ import { Movie } from "../typing";
 import requests from "../utils/requests";
 
 interface Props {
-  netflixOriginals: Movie[];
-  trendingNow: Movie[];
-  topRated: Movie[];
-  actionMovies: Movie[];
-  comedyMovies: Movie[];
-  horrorMovies: Movie[];
-  romanceMovies: Movie[];
-  documentaries: Movie[];
+  NowPlaying: Movie[];
+  TopRated: Movie[];
+  Popular: Movie[];
+  Upcoming: Movie[];
 }
 
-const Home = ({
-  netflixOriginals,
-  actionMovies,
-  comedyMovies,
-  documentaries,
-  horrorMovies,
-  romanceMovies,
-  topRated,
-  trendingNow,
-}: Props) => {
+const Home = ({ NowPlaying, TopRated, Popular, Upcoming }: Props) => {
+  console.log("Nowplaying", NowPlaying);
   const { loading } = useAuth();
   if (loading) return "Loading...";
   return (
@@ -37,18 +25,15 @@ const Home = ({
       </Head>
       <Header />
       <main className="relative pl-4 pb-24 lg:space-y24 lg:pl-16">
-        <Banner netflixOriginals={netflixOriginals} />
+        <Banner NowPlaying={NowPlaying} />
         <section className=" md:space-y-24">
-          <Row title="Trending Now" movies={trendingNow} />
-          <Row title="Top Rated" movies={topRated} />
-          <Row title="Action Thrillers" movies={actionMovies} />
+          <Row title="Now Playing" movies={NowPlaying} />
+          <Row title="Top Rated" movies={TopRated} />
+          <Row title="Popular" movies={Popular} />
           {/* My List */}
           {/* {list.length > 0 && <Row title="My List" movies={list} />} */}
 
-          <Row title="Comedies" movies={comedyMovies} />
-          <Row title="Scary Movies" movies={horrorMovies} />
-          <Row title="Romance Movies" movies={romanceMovies} />
-          <Row title="Documentaries" movies={documentaries} />
+          <Row title="Upcoming" movies={Upcoming} />
         </section>
       </main>
     </div>
@@ -58,35 +43,18 @@ const Home = ({
 export default Home;
 
 export const getServerSideProps = async () => {
-  const [
-    netflixOriginals,
-    trendingNow,
-    topRated,
-    actionMovies,
-    comedyMovies,
-    horrorMovies,
-    romanceMovies,
-    documentaries,
-  ] = await Promise.all([
-    fetch(requests.fetchNetflixOriginals).then((res) => res.json()),
-    fetch(requests.fetchTrending).then((res) => res.json()),
+  const [NowPlaying, TopRated, Popular, Upcoming] = await Promise.all([
+    fetch(requests.fetchNowPlaying).then((res) => res.json()),
     fetch(requests.fetchTopRated).then((res) => res.json()),
-    fetch(requests.fetchActionMovies).then((res) => res.json()),
-    fetch(requests.fetchComedyMovies).then((res) => res.json()),
-    fetch(requests.fetchHorrorMovies).then((res) => res.json()),
-    fetch(requests.fetchRomanceMovies).then((res) => res.json()),
-    fetch(requests.fetchDocumentaries).then((res) => res.json()),
+    fetch(requests.fetchPopular).then((res) => res.json()),
+    fetch(requests.fetchUpcoimg).then((res) => res.json()),
   ]);
   return {
     props: {
-      netflixOriginals: netflixOriginals.results,
-      trendingNow: trendingNow.results,
-      topRated: topRated.results,
-      actionMovies: actionMovies.results,
-      comedyMovies: comedyMovies.results,
-      horrorMovies: horrorMovies.results,
-      romanceMovies: romanceMovies.results,
-      documentaries: documentaries.results,
+      NowPlaying: NowPlaying[0].results,
+      TopRated: TopRated[0].results,
+      Popular: Popular[0].results,
+      Upcoming: Upcoming[0].results,
     },
   };
 };
