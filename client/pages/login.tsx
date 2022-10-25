@@ -3,7 +3,14 @@ import Image from "next/image";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
-
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "../firebase";
+import { useRouter } from "next/router";
+import Link from "next/link";
 interface Inputs {
   email: string;
   password: string;
@@ -12,7 +19,48 @@ interface Inputs {
 const login = () => {
   const [login, setLogin] = useState(false);
   const { signIn, signUp } = useAuth();
+  const router = useRouter();
 
+  const google = new GoogleAuthProvider();
+  const facebook = new FacebookAuthProvider();
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, google)
+      .then((result) => {
+        const { accessToken, displayName, photoURL, email } = result.user;
+        const userGg = {
+          accessToken: accessToken,
+          username: displayName,
+          profilePic: photoURL,
+          email: email,
+        };
+        localStorage.setItem("user", JSON.stringify(userGg));
+        if (userGg !== null) {
+          router.push("/");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const signInWithFacebook = () => {
+    signInWithPopup(auth, facebook)
+      .then((result) => {
+        const { accessToken, displayName, photoURL, email } = result.user;
+        const userFb = {
+          accessToken: accessToken,
+          username: displayName,
+          profilePic: photoURL,
+          email: email,
+        };
+        localStorage.setItem("user", JSON.stringify(userFb));
+        if (userFb !== null) {
+          router.push("/");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const {
     register,
     handleSubmit,
@@ -21,8 +69,6 @@ const login = () => {
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
     if (login) {
       await signIn(email, password);
-    } else {
-      await signUp(email, password);
     }
   };
 
@@ -86,16 +132,94 @@ const login = () => {
         >
           Sign In
         </button>
+        <h3 className="text-center text-xl mt-4">Or</h3>
+        <button
+          type="button"
+          onClick={signInWithGoogle}
+          className="flex w-full items-center justify-center space-x-8 py-2 rounded-md hover:bg-opacity-80 shadow-lg bg-white relative text-black font-bold text-lg"
+        >
+          <svg
+            className="h-8 w-8 absolute left-2"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            style={{ fill: "#000000" }}
+          >
+            <path
+              fill="#fbc02d"
+              d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12	s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20	s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+            ></path>
+            <path
+              fill="#e53935"
+              d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039	l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+            ></path>
+            <path
+              fill="#4caf50"
+              d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36	c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+            ></path>
+            <path
+              fill="#1565c0"
+              d="M43.611,20.083L43.595,20L42,20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571	c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+            ></path>
+          </svg>
+          Login with Google
+        </button>
+        <button
+          type="button"
+          onClick={signInWithFacebook}
+          className="flex w-full items-center justify-center space-x-8 px-4 py-2 rounded-md hover:bg-opacity-80 shadow-lg bg-[#2D88FF] relative text-white font-bold text-lg  mb-2"
+        >
+          <svg
+            className="w-8 h-8 absolute left-2"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            style={{ fill: "#000000" }}
+          >
+            <linearGradient
+              id="Ld6sqrtcxMyckEl6xeDdMa_uLWV5A9vXIPu_gr1"
+              x1="9.993"
+              x2="40.615"
+              y1="9.993"
+              y2="40.615"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0" stopColor="#2aa4f4"></stop>
+              <stop offset="1" stopColor="#007ad9"></stop>
+            </linearGradient>
+            <path
+              fill="url(#Ld6sqrtcxMyckEl6xeDdMa_uLWV5A9vXIPu_gr1)"
+              d="M24,4C12.954,4,4,12.954,4,24s8.954,20,20,20s20-8.954,20-20S35.046,4,24,4z"
+            ></path>
+            <path
+              fill="#fff"
+              d="M26.707,29.301h5.176l0.813-5.258h-5.989v-2.874c0-2.184,0.714-4.121,2.757-4.121h3.283V12.46 c-0.577-0.078-1.797-0.248-4.102-0.248c-4.814,0-7.636,2.542-7.636,8.334v3.498H16.06v5.258h4.948v14.452 C21.988,43.9,22.981,44,24,44c0.921,0,1.82-0.084,2.707-0.204V29.301z"
+            ></path>
+          </svg>
+          Login with Facebook
+        </button>
         <div className="text-[gray]">
           New to Netflix?{" "}
-          <button
-            type="submit"
-            className="text-white hover:underline"
-            onClick={() => setLogin(false)}
-          >
-            Sign up now
-          </button>
+          <Link href="/register">
+            <button
+              type="submit"
+              className="text-white hover:underline"
+              //onClick={() => setLogin(false)}
+            >
+              Sign up now
+            </button>
+          </Link>
         </div>
+        <span className="text-sm text-[gray]">
+          This page is protected by Google reCAPTCHA to ensure you're not a bot.{" "}
+          <b className="text-white">Learn more</b>
+        </span>
       </form>
     </div>
   );
