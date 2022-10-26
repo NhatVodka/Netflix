@@ -8,6 +8,7 @@ module.exports = {
       "image.tmdb.org",
       "scontent.fhan14-2.fna.fbcdn.net",
       "i.ytimg.com",
+      "rb.gy",
     ],
   },
 };

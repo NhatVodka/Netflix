@@ -1,27 +1,34 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import useAuth from "../hooks/useAuth";
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import Head from "next/head";
-const register = () => {
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import useAuth from "../hooks/useAuth";
+
+interface Inputs {
+  email: string;
+  password: string;
+}
+
+function Register() {
+  const [signUpUser, setSignUpUser] = useState(false);
   const { signUp } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  interface Inputs {
-    email: string;
-    password: string;
-  }
+
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-    await signUp(email, password);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (signUpUser) {
+      await signUp(data.email, data.password);
+    }
   };
+
   return (
-    <div className="register w-full h-screen relative">
+    <div className="relative flex h-screen w-screen flex-col bg-black md:items-center md:justify-center md:bg-transparent">
       <Head>
         <title>Netflix</title>
         <link rel="icon" href="/favicon.ico" />
@@ -32,98 +39,60 @@ const register = () => {
         className="-z-10 !hidden opacity-60 sm:!inline"
         objectFit="cover"
       />
-      <div>
-        <div className="py-5 px-12 flex items-center justify-between">
-          <h1 className="text-[#e50914] font-bold text-5xl">PhimNhat</h1>
-          <div className="py-1 px-6 text-lg bg-[#e50914] hover:bg-[#db0510] rounded-sm font-medium z-30">
-            <Link href="/login">Sign in</Link>
-          </div>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+        className="absolute left-4 top-4 cursor-pointer object-contain md:left-10 md:top-6"
+        width={150}
+        height={150}
+      />
+
+      <form
+        className="relative mt-24 space-y-8 rounded bg-black/75 py-10 px-6 md:mt-0 md:max-w-md md:px-14"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <h1 className="text-4xl font-semibold">Sign Up</h1>
+        <div className="space-y-4">
+          <label className="inline-block w-full">
+            <input
+              type="email"
+              placeholder="Email"
+              className={`input ${
+                errors.email && "border-b-2 border-orange-500"
+              }`}
+              {...register("email", { required: true })}
+            />
+            {errors.email && (
+              <p className="p-1 text-[13px] font-light  text-orange-500">
+                Please enter a valid email.
+              </p>
+            )}
+          </label>
+          <label className="inline-block w-full">
+            <input
+              type="password"
+              {...register("password", { required: true })}
+              placeholder="Password"
+              className={`input ${
+                errors.password && "border-b-2 border-orange-500"
+              }`}
+            />
+            {errors.password && (
+              <p className="p-1 text-[13px] font-light  text-orange-500">
+                Your password must contain between 4 and 60 characters.
+              </p>
+            )}
+          </label>
         </div>
-      </div>
-      <div className="w-full  h-full left-0 top-0 absolute flex items-center justify-center flex-col text-white">
-        <h1 className="text-[3.125rem] font-bold">
-          Unlimited movies, TV shows, and more.
-        </h1>
-        <h2 className="m-5 text-3xl font-medium">
-          Watch anywhere. Cancel anytime.
-        </h2>
-        <p className="text-2xl font-medium">
-          Ready to watch? Enter your email to create or start your membership.
-        </p>
-
-        {/* <form className="relative input w-[50%] bg-white flex items-center justify-between mt-5 h-[70px] rounded">
-          <input
-            className="flex-[9] h-[50%] px-[10px] py-0  text-black outline-none"
-            // ref={emailRef}
-            type="email"
-            placeholder="email address"
-            {...register("email", {
-              required: true,
-              minLength: 10,
-              maxLength: 30,
-            })}
-          />
-          {errors?.email?.type === "required" && (
-            <div className="text-yellow-500 text-lg z-[9999] absolute left-2 top-20 ">
-              Please fill your email
-            </div>
-          )}
-          <button
-            type="submit"
-            className="text-white text-2xl font-light cursor-pointer flex-[3] h-full bg-[#db0510] hover:bg-primary outline-none"
-          >
-            Get Started
-          </button>
-        </form> */}
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="relative input w-[50%] bg-white flex items-center justify-between mt-5 h-[70px] rounded"
+        <button
+          className="w-full rounded bg-[#E50914] py-3 font-semibold"
+          onClick={() => setSignUpUser(true)}
+          type="submit"
         >
-          <input
-            className="flex-[9] h-[50%] py-0 px-[10px] text-black outline-none"
-            type="text"
-            placeholder="email"
-            {...register("email", {
-              required: true,
-              maxLength: 10,
-            })}
-          />
-          {errors?.email?.type === "required" && (
-            <p className="text-yellow-500 text-lg z-[9999] absolute left-2 top-20 ">
-              Please enter a valid email.
-            </p>
-          )}
-          <input
-            className="flex-[9] h-[50%] py-0 px-[10px] text-black outline-none"
-            type="password"
-            placeholder="password"
-            {...register("password", {
-              required: true,
-              minLength: 4,
-              maxLength: 20,
-            })}
-          />
-          {errors?.password?.type === "required" && (
-            <div className="text-yellow-500 text-lg z-[9999] absolute right-[220px] top-20 ">
-              Please fill your password
-            </div>
-          )}
-          {errors?.password?.type === "maxLength" && (
-            <div className="text-yellow-500 text-lg z-[9999] absolute right-[-70px] top-20 ">
-              Your password must contain between 4 and 60 characters.
-            </div>
-          )}
-          <button
-            type="submit"
-            className="text-white text-2xl font-light cursor-pointer flex-[3] h-full bg-[#e50914] outline-none"
-          >
-            Start
-          </button>
-        </form>
-      </div>
+          Sign Up
+        </button>
+      </form>
     </div>
   );
-};
+}
 
-export default register;
+export default Register;

@@ -4,6 +4,7 @@ export interface Genre {
 }
 
 export interface Movie {
+  _id: string;
   title: string;
   backdrop_path: string;
   media_type?: string;
@@ -12,6 +13,11 @@ export interface Movie {
   genre_ids: number[];
   id: number;
   name: string;
+  trailer: string[];
+  genre: string[];
+  desc: string;
+  country: string;
+  time: number;
   origin_country: string[];
   original_language: string;
   original_name: string;

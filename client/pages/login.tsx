@@ -26,9 +26,8 @@ const login = () => {
   const signInWithGoogle = () => {
     signInWithPopup(auth, google)
       .then((result) => {
-        const { accessToken, displayName, photoURL, email } = result.user;
+        const { displayName, photoURL, email } = result.user;
         const userGg = {
-          accessToken: accessToken,
           username: displayName,
           profilePic: photoURL,
           email: email,
@@ -45,9 +44,8 @@ const login = () => {
   const signInWithFacebook = () => {
     signInWithPopup(auth, facebook)
       .then((result) => {
-        const { accessToken, displayName, photoURL, email } = result.user;
+        const { displayName, photoURL, email } = result.user;
         const userFb = {
-          accessToken: accessToken,
           username: displayName,
           profilePic: photoURL,
           email: email,
@@ -210,7 +208,7 @@ const login = () => {
             <button
               type="submit"
               className="text-white hover:underline"
-              //onClick={() => setLogin(false)}
+              // onClick={() => setLogin(false)}
             >
               Sign up now
             </button>

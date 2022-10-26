@@ -5,7 +5,6 @@ import useAuth from "../hooks/useAuth";
 const Header = () => {
   const [isScroll, setIsScroll] = useState(false);
   const { logout, user } = useAuth();
-  console.log(user);
 
   useEffect(() => {
     const handleScroll = () => {
